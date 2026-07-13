@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Siparisler - Siparis Takip{% endblock %}
+{% block content %}
+<h3 class="mb-3"><i class="bi bi-list-ul me-2"></i>Siparisler</h3>
+<div class="modern-card">
+<table id="ordersTable" class="table table-striped table-hover mb-0">
+    <thead>
+        <tr>
+            <th>Siparis No</th>
+            <th>Proje Adi</th>
+            <th>Cari</th>
+            <th>Sorumlu Kisi</th>
+            <th>Tarih</th>
+            <th>Durum</th>
+            <th>Ilerleme</th>
+            <th>Toplam Tutar</th>
+            <th>Vadeli Tutar</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.order_number }}</td>
+            <td>{{ order.project_name }}</td>
+            <td>
+                {% if order.customer %}
+                <a href="{{ url_for('customers.detail', customer_id=order.customer.id) }}">{{ order.customer.name }}</a>
+                {% else %}
+                <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+            <td>{{ order.responsible_person or '-' }}</td>
+            <td>{{ order.order_date.strftime('%d.%m.%Y') if order.order_date else '-' }}</td>
+            <td><span class="badge bg-secondary">{{ order.status }}</span></td>
+            <td>{{ order.progress_percent }}%</td>
+            <td>{{ '%.2f'|format(order.total_amount or 0) }} TL</td>
+            <td>
+                {% if order.vadeli_fiyat %}
+                {{ '%.2f'|format(order.vadeli_fiyat) }} TL
+                <span class="text-muted small">(%{{ '%.2f'|format((order.vade_farki_orani or 0) * 100) }})</span>
+                {% else %}
+                <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+            <td><a href="{{ url_for('orders.detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detay</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#ordersTable').DataTable({
+            language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json' },
+            order: [[3, 'desc']]
+        });
+    });
+</script>
+{% endblock %}

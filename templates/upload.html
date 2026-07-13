@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Excel Yukle - Siparis Takip{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="modern-card">
+            <h5 class="mb-3"><i class="bi bi-upload me-2"></i>Yeni Siparis - Excel Yukle</h5>
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="excel_file" class="form-label">Siparis Excel Dosyasi (.xlsx)</label>
+                    <input class="form-control" type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-cloud-upload me-1"></i>Yukle ve Siparis Olustur</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

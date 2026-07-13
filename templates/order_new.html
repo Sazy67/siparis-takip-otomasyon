@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Yeni Siparis - Siparis Takip{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="modern-card">
+            <h5 class="mb-3"><i class="bi bi-plus-circle me-2"></i>Manuel Siparis Olustur</h5>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="project_name" class="form-label">Proje Adi *</label>
+                    <input type="text" id="project_name" name="project_name" class="form-control" required>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="order_date" class="form-label">Tarih</label>
+                        <input type="date" id="order_date" name="order_date" class="form-control">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="responsible_person" class="form-label">Sorumlu Kisi</label>
+                        <input type="text" id="responsible_person" name="responsible_person" class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Cari</label>
+                    <input type="text" name="new_customer_name" class="form-control"
+                           list="customers-datalist" placeholder="Cari adi yazin (mevcut ise secin, yoksa yeni olusturulur)">
+                    <datalist id="customers-datalist">
+                        {% for c in all_customers %}
+                        <option value="{{ c.name }}">
+                        {% endfor %}
+                    </datalist>
+                    <div class="form-text">Bos birakabilirsiniz, sonra sipariş detayindan da atanabilir.</div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle me-1"></i>Siparisi Olustur</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

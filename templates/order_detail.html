@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block title %}{{ order.order_number }} - Siparis Takip{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-file-earmark-text me-2"></i>{{ order.order_number }} - {{ order.project_name }}</h3>
+    {% if order.status == 'Taslak' or order.status == 'Uretimde' %}
+    <form method="post" action="{{ url_for('orders.complete', order_id=order.id) }}">
+        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle me-1"></i>Siparisi Tamamla</button>
+    </form>
+    {% elif order.status == 'Tamamlandi' %}
+    <form method="post" action="{{ url_for('orders.ship', order_id=order.id) }}">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-truck me-1"></i>Sevk Et</button>
+    </form>
+    {% else %}
+    <span class="badge bg-success fs-6"><i class="bi bi-check-circle me-1"></i>{{ order.status }}</span>
+    {% endif %}
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="modern-card h-100">
+            <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Siparis Bilgileri</h5>
+            <table class="table table-sm mb-0">
+                <tr><th>Durum</th><td><span class="badge bg-secondary">{{ order.status }}</span></td></tr>
+                <tr><th>Tarih</th><td>{{ order.order_date.strftime('%d.%m.%Y') if order.order_date else '-' }}</td></tr>
+                <tr><th>Sorumlu Kisi</th><td>{{ order.responsible_person or '-' }}</td></tr>
+                <tr>
+                    <th>Cari</th>
+                    <td>
+                        {% if order.customer %}
+                        <a href="{{ url_for('customers.detail', customer_id=order.customer.id) }}">{{ order.customer.name }}</a>
+                        {% else %}
+                        <span class="text-muted">Cari atanmadi</span>
+                        {% endif %}
+                        <button type="button" class="btn btn-sm btn-link p-0 ms-2" data-bs-toggle="collapse" data-bs-target="#customerChangeForm">
+                            <i class="bi bi-pencil"></i> Degistir
+                        </button>
+                        <div class="collapse mt-2" id="customerChangeForm">
+                            <form method="post" action="{{ url_for('customers.set_order_customer', order_id=order.id) }}" class="row g-2">
+                                <div class="col-12">
+                                    <input type="text" name="new_customer_name" class="form-control form-control-sm"
+                                           list="customers-datalist" placeholder="Cari adi yazin (mevcut ise secin, yoksa yeni olusturulur)">
+                                    <datalist id="customers-datalist">
+                                        {% for c in all_customers %}
+                                        <option value="{{ c.name }}">
+                                        {% endfor %}
+                                    </datalist>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-sm btn-primary">Kaydet</button>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr><th>Ilerleme</th><td>{{ order.produced_count }} / {{ order.item_count }} ({{ order.progress_percent }}%)</td></tr>
+                <tr><th>Kaynak Dosya</th><td>{{ order.source_filename or '-' }}</td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="modern-card h-100">
+            <h5 class="mb-3"><i class="bi bi-cash-coin me-2"></i>Maliyet Ozeti</h5>
+            <table class="table table-sm mb-0">
+                <tr><th>Aluminyum (kg)</th><td>{{ '%.2f'|format(order.aluminyum_kg or 0) }}</td></tr>
+                <tr><th>Aluminyum Malzeme</th><td>{{ '%.2f'|format(order.aluminyum_malzeme_tutari or 0) }} TL</td></tr>
+                <tr><th>Aksesuar</th><td>{{ '%.2f'|format(order.aksesuar_tutari or 0) }} TL</td></tr>
+                <tr><th>Sarf</th><td>{{ '%.2f'|format(order.sarf_tutari or 0) }} TL</td></tr>
+                <tr><th>Fitil</th><td>{{ '%.2f'|format(order.fitil_tutari or 0) }} TL</td></tr>
+                <tr><th>Iscilik</th><td>{{ '%.2f'|format(order.iscilik_tutari or 0) }} TL</td></tr>
+                <tr><th>Kar Orani</th><td>%{{ ((order.kar_orani or 0) * 100)|round(1) }}</td></tr>
+                <tr class="table-active"><th>Nakit Toplam</th><td><strong id="order-total-amount">{{ '%.2f'|format(order.total_amount or 0) }} TL</strong></td></tr>
+            </table>
+
+            <hr>
+            <h6 class="mb-2"><i class="bi bi-calendar2-week me-2"></i>Vadeli Fiyat</h6>
+            <form method="post" action="{{ url_for('orders.set_vadeli_fiyat', order_id=order.id) }}" class="row g-2 align-items-center">
+                <div class="col-7">
+                    <input type="number" step="0.01" min="0" class="form-control" name="vadeli_fiyat"
+                           value="{{ order.vadeli_fiyat or '' }}" placeholder="Vadeli toplam tutar (TL)">
+                </div>
+                <div class="col-5">
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="bi bi-calculator me-1"></i>{{ 'Guncelle' if order.vadeli_fiyat else 'Uygula' }}
+                    </button>
+                </div>
+            </form>
+            {% if order.vade_farki_orani is not none %}
+            <div class="mt-2 small text-muted">
+                Fark orani: <strong>%{{ '%.2f'|format(order.vade_farki_orani * 100) }}</strong>
+                ({{ '%.2f'|format(order.vadeli_fiyat or 0) }} TL vadeli toplam)
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="modern-card">
+    <h5 class="mb-3"><i class="bi bi-plus-circle me-2"></i>Manuel Urun Ekle</h5>
+    <form method="post" action="{{ url_for('orders.add_item', order_id=order.id) }}" class="row g-2 align-items-end">
+        <div class="col-md-2">
+            <label class="form-label small">Kategori</label>
+            <select name="category" class="form-select form-select-sm" required>
+                {% for cat in ['Profil', 'Aksesuar', 'Sarf', 'Fitil', 'Cam'] %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Stok Kodu</label>
+            <input type="text" name="stock_code" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small">Aciklama *</label>
+            <input type="text" name="stock_name" class="form-control form-control-sm" required>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Renk</label>
+            <input type="text" name="color" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Adet</label>
+            <input type="number" step="0.01" min="0" name="quantity" class="form-control form-control-sm" value="1">
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Boy</label>
+            <input type="text" name="length" class="form-control form-control-sm">
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Birim</label>
+            <input type="text" name="unit" class="form-control form-control-sm" value="adet">
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small">Birim Fiyat</label>
+            <input type="number" step="0.01" min="0" name="unit_price" class="form-control form-control-sm" value="0">
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-plus-lg"></i> Ekle</button>
+        </div>
+    </form>
+</div>
+
+{% for category, items in items_by_category.items() %}
+<div class="modern-card">
+<h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>{{ category }} <span class="text-muted">({{ items|length }} kalem)</span></h5>
+<div class="table-responsive">
+<table class="table table-sm table-bordered mb-0">
+    <thead class="table-light">
+        <tr>
+            <th>Stok Kodu</th>
+            <th>Aciklama</th>
+            <th>Renk</th>
+            <th>Adet</th>
+            <th>Boy</th>
+            <th>Gereken Miktar</th>
+            <th>Birim</th>
+            <th>Birim Fiyat</th>
+            <th>Toplam</th>
+            {% if order.vade_farki_orani is not none %}
+            <th class="table-vadeli">Vadeli Birim Fiyat</th>
+            <th class="table-vadeli">Vadeli Toplam</th>
+            {% endif %}
+            <th>Durum</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr id="item-row-{{ item.id }}">
+            <td>{{ item.stock_code or '-' }}</td>
+            <td>{{ item.stock_name or '-' }}</td>
+            <td>{{ item.color or '-' }}</td>
+            <td class="editable-cell" data-field="quantity" data-item-id="{{ item.id }}">
+                <span class="display-value">{{ item.quantity }}</span>
+            </td>
+            <td>{{ item.length or '-' }}</td>
+            <td>{{ item.total_quantity }}</td>
+            <td>{{ item.unit or '-' }}</td>
+            <td class="editable-cell" data-field="unit_price" data-item-id="{{ item.id }}">
+                <span class="display-value">{{ '%.2f'|format(item.unit_price or 0) }}</span>
+            </td>
+            <td class="item-total-price">{{ '%.2f'|format(item.total_price or 0) }}</td>
+            {% if order.vade_farki_orani is not none %}
+            <td class="table-vadeli item-vadeli-unit-price">{{ '%.2f'|format(item.vadeli_unit_price or 0) }}</td>
+            <td class="table-vadeli item-vadeli-total-price">{{ '%.2f'|format(item.vadeli_total_price or 0) }}</td>
+            {% endif %}
+            <td>
+                <button type="button"
+                        class="btn btn-sm toggle-status-btn {{ 'btn-success' if item.status == 'Uretildi' else 'btn-outline-secondary' }}"
+                        data-order-id="{{ order.id }}"
+                        data-item-id="{{ item.id }}">
+                    {{ item.status }}
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+{% endfor %}
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/order_detail.js') }}"></script>
+{% endblock %}

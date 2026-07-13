@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Siparis Takip{% endblock %}
+{% block content %}
+<h3 class="mb-4"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h3>
+
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="bi bi-boxes"></i></div>
+            <h3 class="stat-number">{{ total_orders }}</h3>
+            <p class="stat-label">Toplam Siparis</p>
+        </div>
+    </div>
+    {% set icons = {'Taslak': ('bi-file-earmark', ''), 'Uretimde': ('bi-gear', 'warning'), 'Tamamlandi': ('bi-check-circle', 'success'), 'Sevk Edildi': ('bi-truck', 'primary'), 'Netsise Aktarildi': ('bi-cloud-upload', 'info')} %}
+    {% for status, count in status_counts.items() %}
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="stat-card {{ icons.get(status, ('bi-circle', ''))[1] }}">
+            <div class="stat-icon {{ icons.get(status, ('bi-circle', 'primary'))[1] or 'primary' }}">
+                <i class="bi {{ icons.get(status, ('bi-circle', ''))[0] }}"></i>
+            </div>
+            <h3 class="stat-number">{{ count }}</h3>
+            <p class="stat-label">{{ status }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="modern-card">
+    <h5 class="mb-3"><i class="bi bi-clock-history me-2"></i>Son Siparisler</h5>
+    <table class="table table-striped mb-0">
+        <thead>
+            <tr>
+                <th>Siparis No</th>
+                <th>Proje Adi</th>
+                <th>Durum</th>
+                <th>Tarih</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in recent_orders %}
+            <tr>
+                <td>{{ order.order_number }}</td>
+                <td>{{ order.project_name }}</td>
+                <td><span class="badge bg-secondary">{{ order.status }}</span></td>
+                <td>{{ order.order_date.strftime('%d.%m.%Y') if order.order_date else '-' }}</td>
+                <td><a href="{{ url_for('orders.detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Detay</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted">Henuz siparis yok. <a href="{{ url_for('orders.upload') }}">Excel yukleyin</a>.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
