@@ -17,12 +17,13 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
 
-    os.makedirs(app.instance_path, exist_ok=True)
-    db_path = os.path.join(app.instance_path, 'siparis.db')
+    instance_path = os.environ.get('INSTANCE_PATH', app.instance_path)
+    os.makedirs(instance_path, exist_ok=True)
+    db_path = os.path.join(instance_path, 'siparis.db')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    upload_folder = os.path.join(app.root_path, 'uploads')
+    upload_folder = os.environ.get('UPLOAD_FOLDER', os.path.join(app.root_path, 'uploads'))
     os.makedirs(upload_folder, exist_ok=True)
     app.config['UPLOAD_FOLDER'] = upload_folder
 
