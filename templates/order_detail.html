@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import '_macros.html' as m %}
 {% block title %}{{ order.order_number }} - Siparis Takip{% endblock %}
 {% block content %}
 
@@ -13,7 +14,7 @@
         <button type="submit" class="btn btn-primary"><i class="bi bi-truck me-1"></i>Sevk Et</button>
     </form>
     {% else %}
-    <span class="badge bg-success fs-6"><i class="bi bi-check-circle me-1"></i>{{ order.status }}</span>
+    {{ m.status_pill(order.status) }}
     {% endif %}
 </div>
 
@@ -22,7 +23,7 @@
         <div class="modern-card h-100">
             <h5 class="mb-3"><i class="bi bi-info-circle me-2"></i>Siparis Bilgileri</h5>
             <table class="table table-sm mb-0">
-                <tr><th>Durum</th><td><span class="badge bg-secondary">{{ order.status }}</span></td></tr>
+                <tr><th>Durum</th><td>{{ m.status_pill(order.status) }}</td></tr>
                 <tr><th>Tarih</th><td>{{ order.order_date.strftime('%d.%m.%Y') if order.order_date else '-' }}</td></tr>
                 <tr><th>Sorumlu Kisi</th><td>{{ order.responsible_person or '-' }}</td></tr>
                 <tr>

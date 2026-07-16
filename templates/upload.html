@@ -7,12 +7,56 @@
             <h5 class="mb-3"><i class="bi bi-upload me-2"></i>Yeni Siparis - Excel Yukle</h5>
             <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <label for="excel_file" class="form-label">Siparis Excel Dosyasi (.xlsx)</label>
-                    <input class="form-control" type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                    <label class="form-label">Siparis Excel Dosyasi (.xlsx)</label>
+                    <label class="file-drop d-block" id="fileDropZone" for="excel_file">
+                        <i class="bi bi-file-earmark-arrow-up d-block mb-2"></i>
+                        <span class="file-drop-name" id="fileDropName">Dosya secmek icin tiklayin veya suruklayin</span>
+                        <input type="file" id="excel_file" name="excel_file" accept=".xlsx,.xls" required>
+                    </label>
                 </div>
                 <button type="submit" class="btn btn-primary"><i class="bi bi-cloud-upload me-1"></i>Yukle ve Siparis Olustur</button>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script>
+    (function () {
+        var input = document.getElementById('excel_file');
+        var zone = document.getElementById('fileDropZone');
+        var nameEl = document.getElementById('fileDropName');
+
+        function showFileName() {
+            if (input.files && input.files.length > 0) {
+                nameEl.textContent = input.files[0].name;
+                zone.classList.add('has-file');
+            } else {
+                nameEl.textContent = 'Dosya secmek icin tiklayin veya suruklayin';
+                zone.classList.remove('has-file');
+            }
+        }
+
+        input.addEventListener('change', showFileName);
+
+        ['dragover', 'dragenter'].forEach(function (evt) {
+            zone.addEventListener(evt, function (e) {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(function (evt) {
+            zone.addEventListener(evt, function (e) {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+            });
+        });
+        zone.addEventListener('drop', function (e) {
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                showFileName();
+            }
+        });
+    })();
+</script>
 {% endblock %}

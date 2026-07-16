@@ -31,7 +31,10 @@
 <script>
     $(document).ready(function () {
         $('#customersTable').DataTable({
-            language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json' },
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json',
+                emptyTable: 'Henuz cari kaydi yok. Bir siparis yukledikce cariler otomatik olusur.'
+            },
             order: [[0, 'asc']]
         });
     });

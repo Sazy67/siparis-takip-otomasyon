@@ -1,185 +1,533 @@
-/* Siparis Takip - Rigel gorsel dili ile uyumlu tema (renk/tipografi/kart dili ortak) */
+/* Siparis Takip - alüminyum dograma uretim/siparis panosu
+   Kimlik: soguk celik notrler + tek aksan (isi/kesim turuncusu), teknik grotesk
+   basliklar, tabular veri. Rigel'den devralinan generik "modern-card" dili
+   yerine bu projeye ozgu bir uretim panosu havasi. */
 
 :root {
-    --primary-color: #2563eb;
-    --primary-dark: #1d4ed8;
-    --primary-light: #3b82f6;
-    --success-color: #059669;
-    --success-dark: #047857;
-    --danger-color: #dc2626;
-    --danger-dark: #b91c1c;
-    --warning-color: #d97706;
-    --warning-dark: #b45309;
-    --info-color: #0891b2;
-    --info-dark: #0e7490;
-    --secondary-color: #64748b;
-    --secondary-dark: #475569;
+    /* Aksan: firin/kesim turuncusu - metal isleme atolyesine ait, jenerik mavi degil */
+    --accent: #c2571a;
+    --accent-dark: #9c4514;
+    --accent-soft: #f5e2d3;
 
-    --bg-primary: #f8fafc;
-    --bg-secondary: #f1f5f9;
-    --bg-white: #ffffff;
+    /* Durum renkleri - aksandan ayri, anlam tasiyorlar */
+    --state-pending: #7a8390;
+    --state-done: #1f7a4d;
+    --state-shipped: #2563a8;
+    --state-synced: #6d3fa8;
+    --state-danger: #b3261e;
+    --state-warning: #a66a10;
 
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
+    /* Notrler: hafif mavimsi-gri celik tonu, saf gri degil */
+    --bg-canvas: #eef0f3;
+    --bg-surface: #ffffff;
+    --bg-sunken: #e4e7ec;
+    --line: #d7dbe1;
+    --line-strong: #b9c0ca;
 
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --ink-1: #1a1d23;
+    --ink-2: #4b5361;
+    --ink-3: #7d8695;
 
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
+    --radius: 0.5rem;
+    --radius-sm: 0.3rem;
+    --shadow-card: 0 1px 2px rgba(20, 24, 30, 0.06), 0 1px 1px rgba(20, 24, 30, 0.04);
+    --shadow-pop: 0 8px 24px -8px rgba(20, 24, 30, 0.28);
+
+    --font-display: 'Archivo', 'Arial Narrow', sans-serif;
+    --font-body: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-canvas: #14171c;
+        --bg-surface: #1c2028;
+        --bg-sunken: #23272f;
+        --line: #313640;
+        --line-strong: #454b57;
+
+        --ink-1: #eef0f3;
+        --ink-2: #b7bec9;
+        --ink-3: #838c99;
+
+        --accent: #e07b3f;
+        --accent-dark: #c2571a;
+        --accent-soft: #3a2a1c;
+
+        --state-pending: #9aa3b0;
+        --state-done: #3fae76;
+        --state-shipped: #5b9bdb;
+        --state-synced: #a87ddb;
+
+        --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+        --shadow-pop: 0 8px 28px -8px rgba(0, 0, 0, 0.6);
+    }
+}
+
+:root[data-theme="dark"] {
+    --bg-canvas: #14171c;
+    --bg-surface: #1c2028;
+    --bg-sunken: #23272f;
+    --line: #313640;
+    --line-strong: #454b57;
+
+    --ink-1: #eef0f3;
+    --ink-2: #b7bec9;
+    --ink-3: #838c99;
+
+    --accent: #e07b3f;
+    --accent-dark: #c2571a;
+    --accent-soft: #3a2a1c;
+
+    --state-pending: #9aa3b0;
+    --state-done: #3fae76;
+    --state-shipped: #5b9bdb;
+    --state-synced: #a87ddb;
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+    --shadow-pop: 0 8px 28px -8px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="light"] {
+    --bg-canvas: #eef0f3;
+    --bg-surface: #ffffff;
+    --bg-sunken: #e4e7ec;
+    --line: #d7dbe1;
+    --line-strong: #b9c0ca;
+
+    --ink-1: #1a1d23;
+    --ink-2: #4b5361;
+    --ink-3: #7d8695;
+
+    --accent: #c2571a;
+    --accent-dark: #9c4514;
+    --accent-soft: #f5e2d3;
+
+    --shadow-card: 0 1px 2px rgba(20, 24, 30, 0.06), 0 1px 1px rgba(20, 24, 30, 0.04);
+    --shadow-pop: 0 8px 24px -8px rgba(20, 24, 30, 0.28);
+}
+
+* { box-sizing: border-box; }
+
+html {
+    color-scheme: light dark;
+}
+:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+
+html, body {
+    background-color: var(--bg-canvas);
 }
 
 body {
-    background-color: var(--bg-primary);
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    color: var(--text-primary);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    color: var(--ink-1);
+    font-size: 0.9375rem;
 }
 
-/* Navbar */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    color: var(--ink-1);
+}
+
+table {
+    font-variant-numeric: tabular-nums;
+}
+
+a {
+    color: var(--accent-dark);
+}
+a:hover {
+    color: var(--accent);
+}
+
+/* ---------- Navbar ---------- */
 .navbar {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
-    box-shadow: var(--shadow-md);
-    padding: 0.75rem 0;
+    background: var(--ink-1) !important;
+    box-shadow: 0 1px 0 var(--line-strong);
+    padding: 0.6rem 0;
 }
 
 .navbar-brand {
-    font-weight: 700;
-    font-size: 1.25rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+    color: #fff !important;
 }
+.navbar-brand i { color: var(--accent); }
 
 .nav-link {
     font-weight: 500;
-    transition: all 0.2s ease;
-    border-radius: var(--radius-md);
-    margin: 0 0.15rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.72) !important;
+    transition: color 0.15s ease;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    margin: 0 0.35rem;
+    padding-bottom: 0.35rem !important;
 }
 
 .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: transparent;
+    color: #fff !important;
 }
 
-/* Modern Cards */
+.nav-link.active,
+.nav-link[aria-current="page"] {
+    color: #fff !important;
+    border-bottom-color: var(--accent);
+}
+
+/* ---------- Surfaces (kart yerine duz panel) ---------- */
 .modern-card {
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(226, 232, 240, 0.5);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    overflow: hidden;
+    background: var(--bg-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--line);
+    padding: 1.25rem 1.375rem;
+    margin-bottom: 1.25rem;
 }
 
-.modern-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+.modern-card > h5,
+.modern-card > h6 {
+    display: flex;
+    align-items: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 0.6rem;
+    margin-bottom: 0.9rem !important;
+}
+.modern-card > h5 i,
+.modern-card > h6 i {
+    color: var(--accent);
 }
 
 .card {
-    box-shadow: var(--shadow-sm);
-    border: 1px solid rgba(226, 232, 240, 0.5);
-    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
 }
 
 .card-header {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-sunken);
     font-weight: 600;
-    border-top-left-radius: var(--radius-lg) !important;
-    border-top-right-radius: var(--radius-lg) !important;
+    border-top-left-radius: var(--radius) !important;
+    border-top-right-radius: var(--radius) !important;
 }
 
-/* Stat cards (dashboard sayaclari) */
+/* ---------- Stat cards (dashboard) ---------- */
 .stat-card {
-    background: var(--bg-white);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem 1rem;
-    text-align: center;
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(226, 232, 240, 0.5);
-    transition: all 0.3s ease;
+    background: var(--bg-surface);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
     height: 100%;
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
 }
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--primary-color);
-}
-
-.stat-card.success::before { background: var(--success-color); }
-.stat-card.warning::before { background: var(--warning-color); }
-.stat-card.info::before { background: var(--info-color); }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+    border-left-color: var(--accent);
 }
 
+.stat-card.success { border-left-color: var(--state-done); }
+.stat-card.warning { border-left-color: var(--state-warning); }
+.stat-card.info { border-left-color: var(--state-shipped); }
+.stat-card.primary { border-left-color: var(--accent); }
+
 .stat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 0.75rem;
-    font-size: 24px;
+    font-size: 19px;
+    flex-shrink: 0;
+    background: var(--bg-sunken);
+    color: var(--ink-2);
 }
 
-.stat-icon.primary { background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.1)); color: var(--primary-color); }
-.stat-icon.success { background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(16, 185, 129, 0.1)); color: var(--success-color); }
-.stat-icon.warning { background: linear-gradient(135deg, rgba(217, 119, 6, 0.1), rgba(251, 191, 36, 0.1)); color: var(--warning-color); }
-.stat-icon.info { background: linear-gradient(135deg, rgba(8, 145, 178, 0.1), rgba(34, 197, 94, 0.1)); color: var(--info-color); }
+.stat-icon.primary { color: var(--accent); }
+.stat-icon.success { color: var(--state-done); }
+.stat-icon.warning { color: var(--state-warning); }
+.stat-icon.info { color: var(--state-shipped); }
 
 .stat-number {
-    font-size: 2.25rem;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
     font-weight: 800;
-    color: var(--text-primary);
-    margin: 0.25rem 0;
+    color: var(--ink-1);
     line-height: 1;
-    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-variant-numeric: tabular-nums;
 }
 
 .stat-label {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
+    color: var(--ink-3);
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin: 0.15rem 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ---------- Durum rozetleri: anlamli renk kodlama ---------- */
+.badge.bg-secondary {
+    background-color: var(--bg-sunken) !important;
+    color: var(--ink-2) !important;
     font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--line-strong);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 0.28rem 0.6rem;
+    border-radius: 999px;
+}
+.status-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.status-pill.st-taslak { color: var(--state-pending); background: color-mix(in srgb, var(--state-pending) 14%, transparent); }
+.status-pill.st-uretimde { color: var(--state-warning); background: color-mix(in srgb, var(--state-warning) 16%, transparent); }
+.status-pill.st-tamamlandi { color: var(--state-done); background: color-mix(in srgb, var(--state-done) 16%, transparent); }
+.status-pill.st-sevk { color: var(--state-shipped); background: color-mix(in srgb, var(--state-shipped) 16%, transparent); }
+.status-pill.st-netsis { color: var(--state-synced); background: color-mix(in srgb, var(--state-synced) 16%, transparent); }
+
+/* ---------- Sekmeler (siparis detay kategori tablari) ---------- */
+.nav-tabs {
+    border-bottom: 1px solid var(--line);
+    gap: 0.25rem;
+}
+.nav-tabs .nav-link {
+    color: var(--ink-2) !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    padding: 0.55rem 0.9rem !important;
     margin: 0;
+}
+.nav-tabs .nav-link:hover {
+    background-color: var(--bg-sunken);
+    color: var(--ink-1) !important;
+}
+.nav-tabs .nav-link.active {
+    background-color: var(--bg-surface);
+    color: var(--ink-1) !important;
+    border-color: var(--line);
+    border-bottom-color: var(--bg-surface);
+    margin-bottom: -1px;
+}
+.nav-tabs .nav-link .badge {
+    background-color: var(--bg-sunken) !important;
+    color: var(--ink-3) !important;
+    font-weight: 700;
+    font-size: 0.68rem;
+}
+.nav-tabs .nav-link.active .badge {
+    background-color: var(--accent-soft) !important;
+    color: var(--accent-dark) !important;
+}
+
+/* ---------- Tablolar ---------- */
+.table {
+    --bs-table-color: var(--ink-1);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--line);
+    color: var(--ink-1);
+    margin-bottom: 0;
+}
+.table > thead {
+    background-color: var(--bg-sunken);
+}
+.table > thead th {
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+}
+.table > :not(caption) > * > * {
+    border-bottom-color: var(--line);
+}
+.table-light {
+    --bs-table-bg: var(--bg-sunken);
+}
+.table-active {
+    --bs-table-accent-bg: var(--bg-sunken);
+    color: var(--ink-1);
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: color-mix(in srgb, var(--bg-sunken) 45%, transparent);
+    color: var(--ink-1);
+}
+.table-hover > tbody > tr:hover > * {
+    background-color: var(--accent-soft);
 }
 
 /* Vadeli fiyat sutunlari */
 .table-vadeli {
-    background-color: rgba(217, 119, 6, 0.08) !important;
+    background-color: color-mix(in srgb, var(--state-warning) 10%, transparent) !important;
 }
 
 /* Duzenlenebilir hucreler */
 .editable-cell {
     cursor: pointer;
-    border-bottom: 1px dashed var(--text-muted);
+    border-bottom: 1px dashed var(--ink-3) !important;
+}
+.editable-cell:hover {
+    background-color: var(--accent-soft) !important;
 }
 
-.editable-cell:hover {
-    background-color: rgba(37, 99, 235, 0.06);
+/* ---------- Formlar ---------- */
+.form-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+}
+.form-control, .form-select {
+    background-color: var(--bg-surface);
+    border-color: var(--line-strong);
+    color: var(--ink-1);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* Dosya secici (upload sayfasi) */
+.file-drop {
+    border: 1.5px dashed var(--line-strong);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: var(--bg-sunken);
+    transition: border-color 0.15s ease, background 0.15s ease;
+    cursor: pointer;
+}
+.file-drop:hover, .file-drop.dragover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+.file-drop i {
+    font-size: 2rem;
+    color: var(--ink-3);
+}
+.file-drop.has-file i { color: var(--accent); }
+.file-drop input[type="file"] { display: none; }
+.file-drop .file-drop-name {
+    font-weight: 600;
+    color: var(--ink-1);
+}
+
+/* ---------- Butonlar ---------- */
+.btn-primary {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--accent-dark);
+    border-color: var(--accent-dark);
+}
+.btn-outline-primary {
+    color: var(--accent-dark);
+    border-color: var(--accent);
+}
+.btn-outline-primary:hover {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+.btn-warning {
+    background-color: var(--state-warning);
+    border-color: var(--state-warning);
+    color: #fff;
+}
+.btn-warning:hover {
+    background-color: color-mix(in srgb, var(--state-warning) 85%, black);
+    border-color: color-mix(in srgb, var(--state-warning) 85%, black);
+    color: #fff;
+}
+.btn-success {
+    background-color: var(--state-done);
+    border-color: var(--state-done);
+}
+
+/* ---------- Progress bar ---------- */
+.progress {
+    background-color: var(--bg-sunken);
+}
+.progress-bar {
+    background-color: var(--state-done) !important;
+}
+
+/* ---------- Bos durumlar ---------- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 2.5rem 1rem;
+    color: var(--ink-3);
+    text-align: center;
+}
+.empty-state i {
+    font-size: 2.25rem;
+    color: var(--line-strong);
+}
+.empty-state .empty-title {
+    font-weight: 700;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+    background: var(--bg-surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-pop);
+    border-radius: var(--radius);
+}
+.toast-header {
+    background: var(--bg-sunken);
+    color: var(--ink-1);
+    border-bottom: 1px solid var(--line);
+}
+
+/* DataTables ufak duzeltmeler */
+div.dataTables_wrapper div.dataTables_filter input,
+div.dataTables_wrapper div.dataTables_length select {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background-color: var(--bg-surface);
+    color: var(--ink-1);
 }

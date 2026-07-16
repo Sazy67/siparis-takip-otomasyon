@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import '_macros.html' as m %}
 {% block title %}Siparisler - Siparis Takip{% endblock %}
 {% block content %}
 <h3 class="mb-3"><i class="bi bi-list-ul me-2"></i>Siparisler</h3>
@@ -32,8 +33,15 @@
             </td>
             <td>{{ order.responsible_person or '-' }}</td>
             <td>{{ order.order_date.strftime('%d.%m.%Y') if order.order_date else '-' }}</td>
-            <td><span class="badge bg-secondary">{{ order.status }}</span></td>
-            <td>{{ order.progress_percent }}%</td>
+            <td>{{ m.status_pill(order.status) }}</td>
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="progress flex-grow-1" style="height: 6px; min-width: 60px;">
+                        <div class="progress-bar" role="progressbar" style="width: {{ order.progress_percent }}%;"></div>
+                    </div>
+                    <span class="small text-nowrap">{{ order.progress_percent }}%</span>
+                </div>
+            </td>
             <td>{{ '%.2f'|format(order.total_amount or 0) }} TL</td>
             <td>
                 {% if order.vadeli_fiyat %}
@@ -54,7 +62,10 @@
 <script>
     $(document).ready(function () {
         $('#ordersTable').DataTable({
-            language: { url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json' },
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/tr.json',
+                emptyTable: 'Henuz siparis yok. "Excel Yukle" veya "Yeni Siparis" ile baslayin.'
+            },
             order: [[3, 'desc']]
         });
     });

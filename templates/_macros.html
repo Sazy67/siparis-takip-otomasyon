@@ -1,0 +1,10 @@
+{% macro status_pill(status) %}
+{% set cls = {
+    'Taslak': 'st-taslak',
+    'Uretimde': 'st-uretimde',
+    'Tamamlandi': 'st-tamamlandi',
+    'Sevk Edildi': 'st-sevk',
+    'Netsise Aktarildi': 'st-netsis'
+}.get(status, 'st-taslak') %}
+<span class="status-pill {{ cls }}">{{ status }}</span>
+{% endmacro %}
