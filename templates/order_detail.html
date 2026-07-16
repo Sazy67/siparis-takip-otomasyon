@@ -54,7 +54,19 @@
                         </div>
                     </td>
                 </tr>
-                <tr><th>Ilerleme</th><td>{{ order.produced_count }} / {{ order.item_count }} ({{ order.progress_percent }}%)</td></tr>
+                <tr>
+                    <th>Ilerleme</th>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height: 8px; min-width: 100px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     style="width: {{ order.progress_percent }}%;"
+                                     aria-valuenow="{{ order.progress_percent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="small text-nowrap">{{ order.produced_count }} / {{ order.item_count }} (%{{ order.progress_percent }})</span>
+                        </div>
+                    </td>
+                </tr>
                 <tr><th>Kaynak Dosya</th><td>{{ order.source_filename or '-' }}</td></tr>
             </table>
         </div>
@@ -97,7 +109,12 @@
 </div>
 
 <div class="modern-card">
-    <h5 class="mb-3"><i class="bi bi-plus-circle me-2"></i>Manuel Urun Ekle</h5>
+    <h5 class="mb-0">
+        <button type="button" class="btn btn-link text-decoration-none p-0 fw-bold" data-bs-toggle="collapse" data-bs-target="#addItemForm">
+            <i class="bi bi-plus-circle me-2"></i>Manuel Urun Ekle <i class="bi bi-chevron-down small"></i>
+        </button>
+    </h5>
+    <div class="collapse mt-3" id="addItemForm">
     <form method="post" action="{{ url_for('orders.add_item', order_id=order.id) }}" class="row g-2 align-items-end">
         <div class="col-md-2">
             <label class="form-label small">Kategori</label>
@@ -139,66 +156,87 @@
             <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-plus-lg"></i> Ekle</button>
         </div>
     </form>
+    </div>
 </div>
 
-{% for category, items in items_by_category.items() %}
+{% if items_by_category %}
 <div class="modern-card">
-<h5 class="mb-3"><i class="bi bi-box-seam me-2"></i>{{ category }} <span class="text-muted">({{ items|length }} kalem)</span></h5>
-<div class="table-responsive">
-<table class="table table-sm table-bordered mb-0">
-    <thead class="table-light">
-        <tr>
-            <th>Stok Kodu</th>
-            <th>Aciklama</th>
-            <th>Renk</th>
-            <th>Adet</th>
-            <th>Boy</th>
-            <th>Gereken Miktar</th>
-            <th>Birim</th>
-            <th>Birim Fiyat</th>
-            <th>Toplam</th>
-            {% if order.vade_farki_orani is not none %}
-            <th class="table-vadeli">Vadeli Birim Fiyat</th>
-            <th class="table-vadeli">Vadeli Toplam</th>
-            {% endif %}
-            <th>Durum</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in items %}
-        <tr id="item-row-{{ item.id }}">
-            <td>{{ item.stock_code or '-' }}</td>
-            <td>{{ item.stock_name or '-' }}</td>
-            <td>{{ item.color or '-' }}</td>
-            <td class="editable-cell" data-field="quantity" data-item-id="{{ item.id }}">
-                <span class="display-value">{{ item.quantity }}</span>
-            </td>
-            <td>{{ item.length or '-' }}</td>
-            <td>{{ item.total_quantity }}</td>
-            <td>{{ item.unit or '-' }}</td>
-            <td class="editable-cell" data-field="unit_price" data-item-id="{{ item.id }}">
-                <span class="display-value">{{ '%.2f'|format(item.unit_price or 0) }}</span>
-            </td>
-            <td class="item-total-price">{{ '%.2f'|format(item.total_price or 0) }}</td>
-            {% if order.vade_farki_orani is not none %}
-            <td class="table-vadeli item-vadeli-unit-price">{{ '%.2f'|format(item.vadeli_unit_price or 0) }}</td>
-            <td class="table-vadeli item-vadeli-total-price">{{ '%.2f'|format(item.vadeli_total_price or 0) }}</td>
-            {% endif %}
-            <td>
-                <button type="button"
-                        class="btn btn-sm toggle-status-btn {{ 'btn-success' if item.status == 'Uretildi' else 'btn-outline-secondary' }}"
-                        data-order-id="{{ order.id }}"
-                        data-item-id="{{ item.id }}">
-                    {{ item.status }}
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<ul class="nav nav-tabs" id="categoryTabs" role="tablist">
+    {% for category in category_order %}
+    {% if category in items_by_category %}
+    <li class="nav-item" role="presentation">
+        <button class="nav-link {{ 'active' if loop.first }}" id="tab-{{ loop.index }}-btn"
+                data-bs-toggle="tab" data-bs-target="#tab-{{ loop.index }}" type="button" role="tab">
+            {{ category }} <span class="badge rounded-pill bg-secondary ms-1">{{ items_by_category[category]|length }}</span>
+        </button>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+<div class="tab-content pt-3">
+    {% for category in category_order %}
+    {% if category in items_by_category %}
+    {% set items = items_by_category[category] %}
+    <div class="tab-pane fade {{ 'show active' if loop.first }}" id="tab-{{ loop.index }}" role="tabpanel">
+    <div class="table-responsive">
+    <table class="table table-sm table-bordered mb-0">
+        <thead class="table-light">
+            <tr>
+                <th>Stok Kodu</th>
+                <th>Aciklama</th>
+                <th>Renk</th>
+                <th>Adet</th>
+                <th>Boy</th>
+                <th>Gereken Miktar</th>
+                <th>Birim</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+                {% if order.vade_farki_orani is not none %}
+                <th class="table-vadeli">Vadeli Birim Fiyat</th>
+                <th class="table-vadeli">Vadeli Toplam</th>
+                {% endif %}
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr id="item-row-{{ item.id }}">
+                <td>{{ item.stock_code or '-' }}</td>
+                <td>{{ item.stock_name or '-' }}</td>
+                <td>{{ item.color or '-' }}</td>
+                <td class="editable-cell" data-field="quantity" data-item-id="{{ item.id }}">
+                    <span class="display-value">{{ item.quantity }}</span>
+                </td>
+                <td>{{ item.length or '-' }}</td>
+                <td>{{ item.total_quantity }}</td>
+                <td>{{ item.unit or '-' }}</td>
+                <td class="editable-cell" data-field="unit_price" data-item-id="{{ item.id }}">
+                    <span class="display-value">{{ '%.2f'|format(item.unit_price or 0) }}</span>
+                </td>
+                <td class="item-total-price">{{ '%.2f'|format(item.total_price or 0) }}</td>
+                {% if order.vade_farki_orani is not none %}
+                <td class="table-vadeli item-vadeli-unit-price">{{ '%.2f'|format(item.vadeli_unit_price or 0) }}</td>
+                <td class="table-vadeli item-vadeli-total-price">{{ '%.2f'|format(item.vadeli_total_price or 0) }}</td>
+                {% endif %}
+                <td>
+                    <button type="button"
+                            class="btn btn-sm toggle-status-btn {{ 'btn-success' if item.status == 'Uretildi' else 'btn-outline-secondary' }}"
+                            data-order-id="{{ order.id }}"
+                            data-item-id="{{ item.id }}">
+                        {{ item.status }}
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </div>
+    {% endif %}
+    {% endfor %}
 </div>
 </div>
-{% endfor %}
+{% endif %}
 
 {% endblock %}
 {% block scripts %}

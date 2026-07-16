@@ -125,11 +125,19 @@ def _block_data_rows(tag_rows, category_tag):
     return [row for row, tag in tag_rows if tag == category_tag]
 
 
+GLASS_EMPTY_PLACEHOLDER_PREFIX = 'Cam Yok'
+
+
 def _read_item_row(ws, row, column_map, category):
     """Tek bir veri satirindan OrderItem dict'i uretir. Bos satirlarda None doner."""
     stock_name = _cell(ws, row, column_map.get('stock_name'))
     stock_code = _cell(ws, row, column_map.get('stock_code')) if 'stock_code' in column_map else None
     if not stock_name and not stock_code:
+        return None
+
+    # Cam blogu doldurulmamis siparislerde cizim programi placeholder satir birakiyor
+    # (orn. "Cam Yok, , 0,00") - bu gercek bir kalem degil, item olarak eklenmemeli.
+    if isinstance(stock_name, str) and stock_name.strip().startswith(GLASS_EMPTY_PLACEHOLDER_PREFIX):
         return None
 
     item = {'category': category, 'status': 'Bekliyor'}

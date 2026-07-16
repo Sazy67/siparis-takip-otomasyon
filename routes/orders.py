@@ -138,7 +138,7 @@ def detail(order_id):
         items_by_category.setdefault(item.category, []).append(item)
     all_customers = Customer.query.order_by(Customer.name.asc()).all()
     return render_template('order_detail.html', order=order, items_by_category=items_by_category,
-                            all_customers=all_customers)
+                            category_order=ItemCategory.ALL, all_customers=all_customers)
 
 
 @orders_bp.route('/order/<int:order_id>/complete', methods=['POST'])
